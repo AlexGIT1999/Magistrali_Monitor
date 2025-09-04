@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  magistrali-monitor:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+      - ./config.json:/app/config.json
+    environment:
+      - TZ=Europe/Moscow

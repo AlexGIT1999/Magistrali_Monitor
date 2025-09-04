@@ -15,3 +15,9 @@
 ```bash
 git clone <ваш-репозиторий>
 cd magistrali_monitor
+
+## 🚀 Деплой
+
+### Docker запуск:
+```bash
+docker-compose up -d
