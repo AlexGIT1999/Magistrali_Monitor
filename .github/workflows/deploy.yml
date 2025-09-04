@@ -1,0 +1,46 @@
+name: Deploy to Yandex Cloud
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Yandex Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: cr.yandex
+        username: json_key
+        password: ${{ secrets.YC_SERVICE_ACCOUNT_KEY }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: |
+          cr.yandex/${{ secrets.YC_REGISTRY_ID }}/magistrali-monitor:latest
+          cr.yandex/${{ secrets.YC_REGISTRY_ID }}/magistrali-monitor:${{ github.sha }}
+
+    - name: Deploy to Yandex Cloud
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: |
+          cd /opt/magistrali-monitor
+          docker pull cr.yandex/${{ secrets.YC_REGISTRY_ID }}/magistrali-monitor:latest
+          docker-compose down
+          docker-compose up -d
+          docker image prune -f

@@ -46,3 +46,12 @@ Thumbs.db
 
 # Configs (кроме примера)
 config.local.json
+*.save 
+
+# Local config and data
+config.json
+data/
+deploy.sh
+deploy.sh.save
+magistrali_monitor.log
+Untitled-1.py

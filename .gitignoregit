@@ -1,0 +1,1 @@
+*.save rm --cached config.json data/ deploy.sh deploy.sh.save magistrali_monitor.log Untitled-1.py
