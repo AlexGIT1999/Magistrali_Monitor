@@ -7,7 +7,7 @@ from src.config.settings import get_config, init_config  # ← ИЗМЕНИТЕ 
 from src.services.api_client import APIClient
 from src.services.telegram_service import TelegramService
 from src.utils.file_manager import load_sent_orders, save_sent_orders
-from src.utils.formatters import format_order_message
+from src.utils.formatters import get_safe, format_order_message
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ class MagistraliMonitor:
             logger.info(f"Starting processing of {len(orders)} orders")
             
             for order in orders:
-                order_id = self.api_client.get_safe(order, ["id"])
+                order_id = get_safe(order, ["id"])
                 if not order_id:
                     logger.debug(f"Skipped order without ID: {order}")
                     skipped_count += 1
@@ -101,8 +101,6 @@ class MagistraliMonitor:
         if not self.api_client.verify_token():
             logger.error("Invalid token, check settings")
             return
-
-        # Тестовое сообщение о запуске
         self.telegram_service.send_startup_message()
 
         while True:

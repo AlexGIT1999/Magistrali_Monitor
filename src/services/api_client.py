@@ -3,7 +3,7 @@ import logging
 from datetime import datetime, timedelta
 from typing import List, Dict, Any
 
-from src.config.settings import CONFIG
+from src.config.settings import get_config
 from src.utils.formatters import get_safe
 
 logger = logging.getLogger(__name__)
@@ -12,7 +12,6 @@ class APIClient:
     """Клиент для работы с API Магистрали"""
     
     def __init__(self, token: str = None, base_url: str = None):
-        from src.config.settings import get_config  # ← Добавьте импорт
         config = get_config()
         self.token = token or config["STATIC_TOKEN"]
         self.base_url = base_url or config["API_BASE_URL"]
@@ -42,7 +41,8 @@ class APIClient:
     def get_active_orders(self) -> List[Dict[str, Any]]:
         """Получение активных заказов"""
         try:
-            lookback_time = datetime.utcnow() - timedelta(hours=CONFIG["LOOKBACK_PERIOD_HOURS"])
+            config = get_config()  # ← ДОБАВЬТЕ ЭТУ СТРОКУ
+            lookback_time = datetime.utcnow() - timedelta(hours=config["LOOKBACK_PERIOD_HOURS"])
             logger.info(f"Requesting orders updated after: {lookback_time.isoformat()}")
             
             url = f"{self.base_url}/api/orders/v0/transferOrder/getFlatForExecutor"
