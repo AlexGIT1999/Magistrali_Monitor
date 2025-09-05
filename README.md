@@ -21,4 +21,3 @@ cd magistrali_monitor
 ### Docker запуск:
 ```bash
 docker-compose up -d 
-Небольшое изменение
